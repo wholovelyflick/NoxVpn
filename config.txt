@@ -1,1 +1,1 @@
-vless://5c2ceb17-2605-4ea8-aff5-49f4cb2f0ff7@tunnyl.ru:443?type=tcp&encryption=none&security=reality&pbk=llUN5iiAQwwKwiAp7zCwfU8wNz7F4lg__e9Qdv_gkWs&fp=random&sni=google.com&sid=0f1d6a&spx=%2F&flow=xtls-rprx-vision#%E2%AD%90%EF%B8%8FVless-269lqsyh
+vless://a785d8c9-3f59-41bf-bd67-42d9e7f6e877@world-of.ru:443?type=tcp&encryption=none&security=reality&pbk=6bdxTggpMa9veyosJjxCvB3UPZmj-OquWTqp1iXAP3Y&fp=random&sni=google.com&sid=785be44fdf&spx=%2F&flow=xtls-rprx-vision#%F0%9F%94%84Vless-m70j092p

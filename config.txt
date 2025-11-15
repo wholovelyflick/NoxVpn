@@ -1,1 +1,1 @@
-trojan://VH0VJVNvDi@world-of.ru:4500?type=tcp&security=reality&pbk=5Vv7idJUGI7ydmA8Ym-7GWDm6Q5oMHeqNV9xykzQXE8&fp=random&sni=github.com&sid=83&spx=%2F#%E2%AD%90%EF%B8%8FTR-juk8h7xw
+vless://7d9be42d-043a-4044-8c69-c6fe80778307@hield.ru:3389?type=tcp&encryption=none&security=reality&pbk=brMfFpfxMeNeqGqG0ZmWdwlnvZBfBTY92Jjyfz8Qyz4&fp=ios&sni=google.com&sid=0274c94d298e&spx=%2F&flow=xtls-rprx-vision#%F0%9F%94%84Vless-penq5n1i

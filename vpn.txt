@@ -1,1 +1,2 @@
 vless://0a0d846f-8f54-4db4-940b-b373b1b02e4c@94.131.100.173:443?path=%2Fcoxzfsws&security=tls&encryption=none&host=639010645287857140.accord-lmnxa.info&allowinsecure=1&type=ws&sni=639010645287857140.accord-lmnxa.info#%F0%9F%87%AB%F0%9F%87%AE+Finland%2C+Helsinki+%5BBL%5D
+vless://50343a81-a35e-44b9-a6a6-0b7dd6711ed4@141.98.169.101:443?path=%2Fufkipews&security=tls&encryption=none&allowinsecure=1&type=ws#%F0%9F%87%AB%F0%9F%87%AE+Finland%2C+Helsinki+%5BBL%5D

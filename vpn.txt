@@ -1,3 +1,2 @@
-vless://50c2354a-442a-4dd4-b8b5-9b47ae4c5165@www.perplexity.ai:80?path=%2FHLW3JoJi6BADhOry16&security=&encryption=none&host=icy-block-acf1.exhume-skirt-smirk.workers.dev&type=ws#%F0%9F%87%A8%F0%9F%87%A6%20Canada%2C%20Toronto%20%5BBL%5D
 vless://e258977b-e413-4718-a3af-02d75492c349@188.164.248.122:443?path=%2F%3Fed%3D2560&security=tls&encryption=none&insecure=0&host=www.allxniu.qzz.io&type=ws&allowInsecure=0&sni=www.allxniu.qzz.io#%F0%9F%87%A9%F0%9F%87%AA%20Germany%2C%20Frankfurt%20am%20Main%20%28Innenstadt%20I%29%20%5BBL%5D
 vless://12345678-1234-1234-1234-123456789123@166.62.104.61:2096?path=%2Fsnippets&security=tls&encryption=none&insecure=0&host=vless.hubp.de&type=ws&allowInsecure=0&sni=vless.hubp.de#%F0%9F%87%B7%F0%9F%87%BA%20Russia%2C%20Cheremushki%20%5BBL%5D

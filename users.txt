@@ -1,1 +1,1 @@
-
+1051288232:vless://96090e80-93bc-4e8e-897a-042f6068b500@66.90.90.162:443?security=reality&encryption=none&pbk=J_jQq9-SWQZjiMhuPaFV7V2MaJ4pkKgVRaz7x6tmvy8&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=ru.sfasti.ru&sid=16895459a2c7768d#%F0%9F%87%AB%F0%9F%87%B7%20France%2C%20Paris%20%5BBL%5D

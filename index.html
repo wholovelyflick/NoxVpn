@@ -1,373 +1,1229 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NoxVPN</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>
-    :root {
-      --bg:        #05070f;
-      --card:      rgba(10, 12, 28, 0.94);
-      --glass:     rgba(12, 16, 38, 0.68);
-      --accent:    #1e3a8a;
-      --accent-glow:#3349b8;
-      --neon:      0 0 18px rgba(30, 58, 138, 0.55), inset 0 0 12px rgba(30, 58,138, 0.25);
-      --text:      #e0e7ff;
-      --muted:     #a0aec0;
-      --success:   #22c55e;
-      --shadow:    0 12px 40px rgba(0,0,0,0.75);
-    }
-
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ─── Splash ──────────────────────────────────────── */
-    #splash {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s ease;
-    }
-    #splash.hidden {
-      opacity: 0;
-      transform: scale(1.12) translateY(-20px);
-      pointer-events: none;
-    }
-    .logo-splash {
-      font-size: 6.2rem;
-      font-weight: 900;
-      letter-spacing: -3px;
-      background: linear-gradient(135deg, #93c5fd, #1e40af, #3349b8);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: var(--neon);
-      animation: liquidPulse 2.4s ease-in-out infinite alternate, float 7s ease-in-out infinite;
-    }
-    @keyframes liquidPulse {
-      0%   { filter: brightness(1) drop-shadow(0 0 20px rgba(30,58,138,0.6)); transform: scale(0.94); }
-      100% { filter: brightness(1.4) drop-shadow(0 0 45px rgba(30,58,138,0.9)); transform: scale(1.06); }
-    }
-    @keyframes float {
-      0%,100% { transform: translateY(0); }
-      50%     { transform: translateY(-18px); }
-    }
-    .loading-bar {
-      width: 180px;
-      height: 4px;
-      background: rgba(30,58,138,0.18);
-      border-radius: 2px;
-      margin-top: 2.2rem;
-      overflow: hidden;
-    }
-    .loading-progress {
-      width: 0;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, #3b82f6, transparent);
-      animation: loading 1.6s cubic-bezier(0.4,0,0.2,1) forwards;
-    }
-    @keyframes loading { to { width: 100%; } }
-
-    /* ─── Pages ───────────────────────────────────────── */
-    .page {
-      display: none;
-      padding: 16px 18px 110px;
-      min-height: 100vh;
-      opacity: 0;
-      transform: translateY(30px) scale(0.96);
-      transition: all 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .page.active {
-      display: block;
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 20px;
-      background: var(--glass);
-      border-radius: 20px;
-      margin-bottom: 22px;
-      border: 1px solid rgba(30,58,138,0.22);
-      backdrop-filter: blur(20px);
-      box-shadow: var(--shadow);
-      transition: all 0.4s ease;
-    }
-    .header:hover { transform: translateY(-3px); }
-
-    .logo {
-      font-size: 28px;
-      font-weight: 900;
-      background: linear-gradient(90deg, #c7d2fe, #60a5fa, #1e40af);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      letter-spacing: -1px;
-    }
-
-    .card {
-      background: var(--glass);
-      border-radius: 24px;
-      padding: 24px;
-      margin-bottom: 20px;
-      border: 1px solid rgba(30,58,138,0.25);
-      backdrop-filter: blur(22px);
-      box-shadow: var(--neon), var(--shadow);
-      transition: all 0.45s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    .card:hover {
-      transform: translateY(-8px) scale(1.015);
-      box-shadow: 0 0 40px rgba(30,58,138,0.7), var(--shadow);
-    }
-
-    .btn {
-      background: linear-gradient(145deg, #1e40af, #111827);
-      color: white;
-      border: none;
-      padding: 16px;
-      border-radius: 18px;
-      font-weight: 700;
-      font-size: 15.5px;
-      width: 100%;
-      cursor: pointer;
-      transition: all 0.38s cubic-bezier(0.34,1.56,0.64,1);
-      box-shadow: 0 8px 28px rgba(30,58,138,0.45);
-      position: relative;
-      overflow: hidden;
-    }
-    .btn::before {
-      content: '';
-      position: absolute;
-      top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
-      transition: left 0.7s;
-    }
-    .btn:hover::before { left: 100%; }
-    .btn:hover {
-      transform: translateY(-6px) scale(1.03);
-      box-shadow: 0 16px 40px rgba(30,58,138,0.65);
-    }
-
-    .tab-bar {
-      position: fixed;
-      bottom: 14px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 94%;
-      max-width: 420px;
-      background: var(--glass);
-      backdrop-filter: blur(32px);
-      border-radius: 24px;
-      display: flex;
-      padding: 10px;
-      border: 1px solid rgba(30,58,138,0.28);
-      box-shadow: 0 -8px 32px rgba(0,0,0,0.6);
-      z-index: 100;
-    }
-    .tab {
-      flex: 1;
-      color: var(--muted);
-      text-align: center;
-      padding: 10px 0;
-      border-radius: 14px;
-      transition: all 0.42s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    .tab.active {
-      color: #a5b4fc;
-      background: rgba(30,58,138,0.22);
-      transform: translateY(-4px);
-      box-shadow: 0 6px 20px rgba(30,58,138,0.4);
-    }
-    .tab i { font-size: 22px; margin-bottom: 4px; transition: transform 0.4s; }
-    .tab.active i { transform: scale(1.15); }
-
-    .key-card {
-      background: rgba(12,16,38,0.75);
-      border-radius: 20px;
-      padding: 18px;
-      margin-bottom: 16px;
-      border: 1px solid rgba(30,58,138,0.3);
-      transition: all 0.4s ease;
-    }
-    .key-card:hover {
-      transform: translateX(6px);
-      box-shadow: 0 0 30px rgba(30,58,138,0.5);
-    }
-
-    .small-btn {
-      padding: 8px 16px;
-      border-radius: 12px;
-      background: rgba(30,58,138,0.16);
-      border: 1px solid rgba(30,58,138,0.4);
-      color: #a5b4fc;
-      font-size: 13.5px;
-      transition: all 0.3s;
-    }
-    .small-btn:hover {
-      background: rgba(30,58,138,0.3);
-      transform: translateY(-2px);
-    }
-
-    .status {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      background: rgba(34,197,94,0.08);
-      border-radius: 16px;
-      border: 1px solid rgba(34,197,94,0.22);
-      margin-top: 18px;
-      backdrop-filter: blur(10px);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NoxVPN ⚡ Premium VPN</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #04050d;
+            --card-bg: rgba(8, 10, 24, 0.92);
+            --accent-blue: #1e40af;
+            --accent-dark-blue: #0f172a;
+            --glow-blue: rgba(30, 58, 138, 0.45);
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --shadow-deep: 0 16px 50px rgba(0, 0, 0, 0.8);
+            --border-glow: rgba(30, 58, 138, 0.28);
+        }
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: system-ui, sans-serif;
+            background: var(--bg-color);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .background-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background:
+                radial-gradient(circle at 12% 22%, rgba(30, 58, 138, 0.22) 0%, transparent 42%),
+                radial-gradient(circle at 88% 78%, rgba(15, 23, 42, 0.22) 0%, transparent 42%);
+            animation: pulseBackground 16s ease-in-out infinite alternate;
+        }
+        @keyframes pulseBackground {
+            0% { opacity: 0.65; }
+            100% { opacity: 0.95; }
+        }
+        .particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute;
+            background: rgba(30, 58, 138, 0.12);
+            border-radius: 50%;
+            animation: floatParticle 22s infinite linear;
+        }
+        @keyframes floatParticle {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+            100% { transform: translateY(-1200px) rotate(720deg); opacity: 0.2; }
+        }
+        .page {
+            display: none;
+            padding: 18px;
+            min-height: 100vh;
+            opacity: 0;
+            transform: translateY(25px) scale(0.97);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            padding-bottom: 110px;
+        }
+        .page.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            animation: pageLiquid 0.65s ease-out;
+        }
+        @keyframes pageLiquid {
+            from { opacity: 0; transform: translateY(30px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(22px) saturate(180%);
+            border-radius: 26px;
+            padding: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            box-shadow: var(--shadow-deep);
+            margin-bottom: 18px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
+            animation: borderGlow 4s linear infinite;
+        }
+        @keyframes borderGlow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .glass-card:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: var(--shadow-deep), inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 0 45px rgba(30, 58, 138, 0.5);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px;
+            background: var(--card-bg);
+            backdrop-filter: blur(24px);
+            border-radius: 22px;
+            margin-bottom: 22px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            box-shadow: var(--shadow-deep);
+            animation: slideDown 0.6s ease-out;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .logo-text {
+            font-weight: 900;
+            font-size: 26px;
+            background: linear-gradient(135deg, #1e40af, #1e3a8a, #0f172a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 8px rgba(30, 58, 138, 0.35);
+            letter-spacing: -0.4px;
+        }
+        .btn {
+            background: linear-gradient(135deg, var(--accent-dark-blue), #1e293b);
+            color: white;
+            padding: 16px 22px;
+            border-radius: 16px;
+            border: none;
+            font-weight: 700;
+            font-size: 15px;
+            width: 100%;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 25px var(--glow-blue);
+            letter-spacing: 0.4px;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transition: left 0.55s;
+        }
+        .btn:hover::before {
+            left: 100%;
+        }
+        .btn:hover {
+            transform: translateY(-4px) scale(1.025);
+            box-shadow: 0 14px 35px var(--glow-blue);
+        }
+        .btn:active {
+            transform: translateY(-2px) scale(0.99);
+        }
+        .btn-secondary {
+            background: rgba(30, 58, 138, 0.14);
+            color: var(--text);
+            padding: 10px 18px;
+            border-radius: 14px;
+            border: 1px solid rgba(30, 58, 138, 0.28);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: var(--shadow-deep);
+        }
+        .btn-secondary:hover {
+            background: rgba(30, 58, 138, 0.22);
+            border-color: rgba(30, 58, 138, 0.35);
+            transform: translateY(-3px);
+        }
+        .key-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .key-item {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.55), rgba(15, 23, 42, 0.75));
+            backdrop-filter: blur(14px);
+            border-radius: 18px;
+            padding: 18px;
+            border: 1px solid rgba(30, 58, 138, 0.18);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .key-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--accent-blue), var(--accent-dark-blue));
+        }
+        .key-item:hover {
+            transform: translateX(4px);
+            border-color: var(--border-glow);
+            box-shadow: 0 0 35px rgba(30, 58, 138, 0.45);
+        }
+        .key-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .key-country {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .key-flag {
+            font-size: 22px;
+        }
+        .key-status {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 18px;
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--success);
+            font-weight: 600;
+        }
+        .key-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(30, 58, 138, 0.18);
+        }
+        .key-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .key-action-btn {
+            padding: 7px 14px;
+            border-radius: 10px;
+            background: rgba(30, 58, 138, 0.22);
+            color: var(--accent-blue);
+            border: 1px solid rgba(30, 58, 138, 0.35);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .key-action-btn:hover {
+            background: rgba(30, 58, 138, 0.32);
+            transform: translateY(-3px);
+        }
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: rgba(16, 185, 129, 0.08);
+            border-radius: 14px;
+            border: 1px solid rgba(16, 185, 129, 0.18);
+            margin-top: 18px;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+            animation: pulse 1.8s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.45; }
+        }
+        .tab-bar {
+            position: fixed;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 380px;
+            background: var(--card-bg);
+            backdrop-filter: blur(28px) saturate(180%);
+            border-radius: 23px;
+            display: flex;
+            justify-content: space-around;
+            padding: 14px;
+            border: 1px solid rgba(30, 58, 138, 0.18);
+            box-shadow: var(--shadow-deep);
+            z-index: 1000;
+        }
+        .tab-item {
+            color: var(--text-muted);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 14px;
+            border-radius: 14px;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        .tab-item i {
+            font-size: 20px;
+            transition: all 0.35s ease;
+        }
+        .tab-item span {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.25px;
+        }
+        .tab-item.active {
+            color: var(--accent-blue);
+            background: rgba(30, 58, 138, 0.22);
+            transform: translateY(-4px);
+        }
+        .tab-item.active i {
+            transform: scale(1.08);
+            filter: drop-shadow(0 2px 3px var(--glow-blue));
+        }
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            width: 18px;
+            height: 2px;
+            background: var(--accent-blue);
+            border-radius: 1px;
+        }
+        .loader {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(30, 58, 138, 0.18);
+            border-radius: 50%;
+            border-top-color: var(--accent-blue);
+            animation: spin 0.9s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .notification {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            background: var(--card-bg);
+            backdrop-filter: blur(18px);
+            padding: 13px 23px;
+            border-radius: 14px;
+            border: 1px solid rgba(30, 58, 138, 0.25);
+            box-shadow: var(--shadow-deep);
+            transform: translateX(140%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2000;
+            max-width: 280px;
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .connect-all-btn {
+            margin-top: 18px;
+            background: linear-gradient(135deg, var(--accent-dark-blue), #1e293b);
+            border: 1px solid rgba(30, 58, 138, 0.35);
+        }
+        .connect-all-btn:hover {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-dark-blue));
+        }
+        @media (max-width: 768px) {
+            .glass-card {
+                padding: 18px;
+            }
+            .header {
+                padding: 14px;
+            }
+            .logo-text {
+                font-size: 24px;
+            }
+            .tab-bar {
+                width: 95%;
+                bottom: 12px;
+                padding: 11px;
+            }
+        }
+        ::-webkit-scrollbar {
+            width: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(30, 58, 138, 0.08);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--accent-blue), var(--accent-dark-blue));
+            border-radius: 3px;
+        }
+    </style>
 </head>
 <body>
-
-  <!-- Splash -->
-  <div id="splash">
-    <div class="logo-splash">NoxVPN</div>
-    <div class="loading-bar"><div class="loading-progress"></div></div>
-  </div>
-
-  <!-- Buy -->
-  <div id="buy" class="page active">
-    <div class="header">
-      <div class="logo">NoxVPN</div>
-      <button class="btn" style="width:auto;padding:12px 20px;" onclick="tg.switchInlineQueryCurrentChat('/start')">Бот</button>
+    <div class="background-gradient"></div>
+    <div class="particles" id="particles"></div>
+    <div class="notification" id="notification"></div>
+    <div id="buy" class="page active">
+        <div class="header">
+            <span class="logo-text">NoxVPN</span>
+            <button class="btn-secondary" onclick="showPage('keys')">
+                <i class="fas fa-key"></i> Мои ключи
+            </button>
+        </div>
+       
+        <div class="glass-card">
+            <div style="
+                width: 75px;
+                height: 75px;
+                background: linear-gradient(135deg, var(--accent-blue), var(--accent-dark-blue));
+                border-radius: 22px;
+                margin: 0 auto 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 38px;
+                box-shadow: 0 0 35px rgba(30, 58, 138, 0.4);
+                animation: pulse 1.9s infinite;
+            ">
+                ⚡
+            </div>
+            <h3 style="font-size: 22px; margin-bottom: 8px; text-align: center;">
+                Premium Подписка
+            </h3>
+            <p style="color: var(--text-muted); text-align: center; line-height: 1.5; margin-bottom: 22px;">
+                Полный доступ ко всем серверам, максимальная скорость,
+                гарантированная анонимность и защита данных.
+            </p>
+           
+            <div style="
+                background: rgba(30, 58, 138, 0.18);
+                border-radius: 18px;
+                padding: 18px;
+                margin: 22px 0;
+                border: 1px solid rgba(30, 58, 138, 0.25);
+            ">
+                <div style="font-size: 34px; font-weight: 900; text-align: center;
+                    background: linear-gradient(135deg, #3b82f6, #1e40af, #1e3a8a);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    margin-bottom: 4px;">
+                    100₽
+                </div>
+                <div style="text-align: center; color: var(--text-muted); font-size: 13px;">
+                    / месяц • Оплата в боте
+                </div>
+            </div>
+           
+            <button class="btn" onclick="initiatePayment()">
+                <i class="fas fa-shopping-cart"></i> КУПИТЬ В БОТЕ
+            </button>
+           
+            <div class="connection-status" id="connectionStatus" style="display: none;">
+                <div class="status-dot"></div>
+                <span id="connectionText">Подключено</span>
+            </div>
+        </div>
+       
+        <div class="glass-card">
+            <h4 style="margin-bottom: 14px; color: var(--text-muted);">
+                <i class="fas fa-shield-alt"></i> Преимущества
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 11px;">
+                <div style="display: flex; align-items: center; gap: 11px;">
+                    <div style="
+                        width: 30px;
+                        height: 30px;
+                        background: rgba(16, 185, 129, 0.12);
+                        border-radius: 9px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: var(--success);
+                    ">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <span>Безлимитный трафик</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 11px;">
+                    <div style="
+                        width: 30px;
+                        height: 30px;
+                        background: rgba(30, 58, 138, 0.12);
+                        border-radius: 9px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: var(--accent-blue);
+                    ">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <span>Высокая скорость до 1 Гбит/с</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 11px;">
+                    <div style="
+                        width: 30px;
+                        height: 30px;
+                        background: rgba(30, 58, 138, 0.18);
+                        border-radius: 9px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: var(--accent-dark-blue);
+                    ">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <span>Серверы в 25+ странах</span>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="card" style="text-align:center;">
-      <div style="font-size:80px;animation:liquidPulse 5s infinite alternate;opacity:0.92;margin:20px 0;">⚡</div>
-      <h2 style="margin-bottom:10px;">Premium</h2>
-      <p style="color:var(--muted);">Безлимит · 5 устройств · Макс. скорость</p>
-
-      <div style="margin:28px 0;padding:22px;background:rgba(30,58,138,0.1);border-radius:18px;border:1px solid rgba(30,58,138,0.28);">
-        <div style="font-size:48px;font-weight:900;color:#a5b4fc;">100 ₽</div>
-        <div style="color:var(--muted);margin-top:8px;">/ месяц — оплата в боте</div>
-      </div>
-
-      <button class="btn" onclick="tg.switchInlineQueryCurrentChat('/buy')">
-        <i class="fas fa-rocket" style="margin-right:10px;"></i> КУПИТЬ В БОТЕ
-      </button>
+    <div id="keys" class="page">
+        <div class="header">
+            <button class="btn-secondary" onclick="showPage('buy')">
+                <i class="fas fa-arrow-left"></i> Назад
+            </button>
+            <span class="logo-text">Мои ключи</span>
+            <button class="btn-secondary" onclick="loadKeys(true)">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+        </div>
+       
+        <div class="glass-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                <h3 style="font-size: 18px;">Активные подключения</h3>
+                <span class="key-status" id="keysCount">
+                    <i class="fas fa-circle"></i> <span id="keysCountText">0 ключей</span>
+                </span>
+            </div>
+           
+            <div class="key-list" id="keyList">
+            </div>
+           
+            <button class="btn connect-all-btn" onclick="connectAllConfigs()">
+                <i class="fas fa-plug"></i> ПОДКЛЮЧИТЬ ВСЕ КОНФИГИ
+            </button>
+           
+            <div style="text-align: center; margin-top: 28px; color: var(--text-muted); font-size: 11px;">
+                <i class="fas fa-info-circle"></i>
+                Нажмите "Подключить" для автоматической настройки в v2rayTun
+            </div>
+        </div>
     </div>
-  </div>
-
-  <!-- Keys -->
-  <div id="keys" class="page">
-    <div class="header">
-      <button onclick="showPage('buy')">←</button>
-      <div class="logo">Конфиги</div>
-      <button onclick="loadKeys()"><i class="fas fa-sync"></i></button>
+    <div id="profile" class="page">
+        <div class="header">
+            <button class="btn-secondary" onclick="showPage('buy')">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <span class="logo-text">Профиль</span>
+            <button class="btn-secondary" onclick="refreshProfile()">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+        </div>
+       
+        <div class="glass-card">
+            <div id="profileAvatar" style="
+                width: 90px;
+                height: 90px;
+                background: linear-gradient(135deg, var(--accent-blue), var(--accent-dark-blue));
+                border-radius: 50%;
+                margin: 0 auto 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 38px;
+                box-shadow: 0 0 35px rgba(30, 58, 138, 0.35);
+                border: 3px solid var(--card-bg);
+            ">
+                <i class="fas fa-user"></i>
+            </div>
+           
+            <div id="user-name" style="
+                font-size: 22px;
+                font-weight: 800;
+                text-align: center;
+                margin-bottom: 4px;
+                background: linear-gradient(135deg, #fff, #a5b4fc);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            ">
+                Загрузка...
+            </div>
+           
+            <div style="color: var(--text-muted); text-align: center; margin-bottom: 28px;">
+                <i class="fas fa-id-card"></i>
+                ID: <span id="user-id" style="font-family: monospace;">00000000</span>
+            </div>
+           
+            <div id="userStats" style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+                margin-top: 22px;
+                border-top: 1px solid rgba(255, 255, 255, 0.07);
+                padding-top: 22px;
+            ">
+            </div>
+        </div>
     </div>
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <h3>Ключи</h3>
-        <span id="count" style="background:rgba(34,197,94,0.1);color:var(--success);padding:6px 14px;border-radius:20px;font-size:14px;">0</span>
-      </div>
-      <div id="keyList"></div>
+    <div id="info" class="page">
+        <div class="header">
+            <button class="btn-secondary" onclick="showPage('buy')">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <span class="logo-text">Инструкция</span>
+        </div>
+       
+        <div class="glass-card">
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                margin-bottom: 22px;
+                padding-bottom: 18px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            ">
+                <div style="
+                    width: 48px;
+                    height: 48px;
+                    background: linear-gradient(135deg, var(--accent-blue), var(--accent-dark-blue));
+                    border-radius: 14px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 22px;
+                ">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h3 style="font-size: 20px;">Быстрый старт</h3>
+                    <p style="color: var(--text-muted); font-size: 13px;">
+                        Подключитесь за 4 простых шага
+                    </p>
+                </div>
+            </div>
+           
+            <div style="display: flex; flex-direction: column; gap: 22px;">
+                <div class="step-card" style="
+                    display: flex;
+                    gap: 18px;
+                    align-items: flex-start;
+                    padding: 18px;
+                    background: rgba(30, 58, 138, 0.12);
+                    border-radius: 18px;
+                    border: 1px solid rgba(30, 58, 138, 0.25);
+                ">
+                    <div style="
+                        width: 38px;
+                        height: 38px;
+                        background: linear-gradient(135deg, var(--accent-blue), var(--accent-dark-blue));
+                        border-radius: 11px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: 900;
+                        font-size: 18px;
+                        flex-shrink: 0;
+                    ">
+                        1
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 6px; font-size: 16px;">Купите подписку</h4>
+                        <p style="color: var(--text-muted); line-height: 1.5;">
+                            Нажмите "Купить в боте" и отправьте команду /buy в боте
+                        </p>
+                    </div>
+                </div>
+               
+                <div class="step-card" style="
+                    display: flex;
+                    gap: 18px;
+                    align-items: flex-start;
+                    padding: 18px;
+                    background: rgba(30, 58, 138, 0.08);
+                    border-radius: 18px;
+                    border: 1px solid rgba(30, 58, 138, 0.22);
+                ">
+                    <div style="
+                        width: 38px;
+                        height: 38px;
+                        background: linear-gradient(135deg, #1e40af, #1e3a8a);
+                        border-radius: 11px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: 900;
+                        font-size: 18px;
+                        flex-shrink: 0;
+                    ">
+                        2
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 6px; font-size: 16px;">Скачайте v2rayTun</h4>
+                        <p style="color: var(--text-muted); line-height: 1.5;">
+                            Установите приложение v2rayTun:
+                        </p>
+                        <div style="display: flex; gap: 13px; margin-top: 10px;">
+                            <button class="btn-secondary" onclick="openAppStore()">
+                                <i class="fab fa-apple"></i> App Store
+                            </button>
+                            <button class="btn-secondary" onclick="openPlayStore()">
+                                <i class="fab fa-google-play"></i> Play Market
+                            </button>
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="step-card" style="
+                    display: flex;
+                    gap: 18px;
+                    align-items: flex-start;
+                    padding: 18px;
+                    background: rgba(30, 58, 138, 0.12);
+                    border-radius: 18px;
+                    border: 1px solid rgba(30, 58, 138, 0.25);
+                ">
+                    <div style="
+                        width: 38px;
+                        height: 38px;
+                        background: linear-gradient(135deg, #1e3a8a, #0f172a);
+                        border-radius: 11px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: 900;
+                        font-size: 18px;
+                        flex-shrink: 0;
+                    ">
+                        3
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 6px; font-size: 16px;">Подключите ключи</h4>
+                        <p style="color: var(--text-muted); line-height: 1.5;">
+                            В разделе "Мои ключи" нажмите "Подключить все конфиги"
+                        </p>
+                    </div>
+                </div>
+               
+                <div class="step-card" style="
+                    display: flex;
+                    gap: 18px;
+                    align-items: flex-start;
+                    padding: 18px;
+                    background: rgba(30, 58, 138, 0.08);
+                    border-radius: 18px;
+                    border: 1px solid rgba(30, 58, 138, 0.22);
+                ">
+                    <div style="
+                        width: 38px;
+                        height: 38px;
+                        background: linear-gradient(135deg, #0f172a, #1e293b);
+                        border-radius: 11px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: 900;
+                        font-size: 18px;
+                        flex-shrink: 0;
+                    ">
+                        4
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 6px; font-size: 16px;">Запустите VPN</h4>
+                        <p style="color: var(--text-muted); line-height: 1.5;">
+                            В приложении v2rayTun нажмите кнопку "Старт"
+                        </p>
+                    </div>
+                </div>
+            </div>
+           
+            <div style="
+                margin-top: 28px;
+                padding: 18px;
+                background: rgba(30, 58, 138, 0.08);
+                border-radius: 18px;
+                border: 1px solid rgba(30, 58, 138, 0.22);
+            ">
+                <h4 style="margin-bottom: 8px; color: var(--text-muted);">
+                    <i class="fas fa-life-ring"></i> Нужна помощь?
+                </h4>
+                <p style="color: var(--text-muted); font-size: 13px; line-height: 1.5;">
+                    Пишите в поддержку Telegram:
+                    <a href="https://t.me/noxvpn_support" style="color: var(--accent-blue); text-decoration: none;">
+                        @noxvpn_support
+                    </a>
+                </p>
+            </div>
+        </div>
     </div>
-  </div>
-
-  <!-- Profile & Info pages (можно расширить) -->
-
-  <div class="tab-bar">
-    <div class="tab active"  onclick="showPage('buy',this)"><i class="fas fa-bolt"></i><div>Купить</div></div>
-    <div class="tab" onclick="showPage('keys',this);loadKeys()"><i class="fas fa-key"></i><div>Ключи</div></div>
-    <div class="tab" onclick="showPage('profile',this)"><i class="fas fa-user"></i><div>Профиль</div></div>
-    <div class="tab" onclick="showPage('info',this)"><i class="fas fa-info-circle"></i><div>Инструкция</div></div>
-  </div>
-
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready(); tg.expand(); tg.setBackgroundColor('#05070f'); tg.setHeaderColor('#05070f');
-
-    const USERS_URL = 'https://raw.githubusercontent.com/wholovelyflick/N0xVpn/refs/heads/main/sub.txt?token=GHSAT0AAAAAADTUP5BYBGDSGRXP23JNV3YE2LR6R5Q?t=';
-
-    let userId = tg.initDataUnsafe?.user?.id?.toString() || 'test';
-    let configs = [];
-
-    // Быстрый splash (~1.6–1.8 сек)
-    setTimeout(() => {
-      document.getElementById('splash').classList.add('hidden');
-    }, 1600);
-
-    async function fetchText(url) {
-      try {
-        const res = await fetch(url + Date.now());
-        return res.ok ? await res.text() : '';
-      } catch { return ''; }
-    }
-
-    async function loadKeys() {
-      const list = document.getElementById('keyList');
-      list.innerHTML = '<div style="text-align:center;padding:70px 0;color:var(--muted);"><div style="width:36px;height:36px;border:4px solid rgba(30,58,138,0.25);border-top:4px solid #3b82f6;border-radius:50%;animation:spin 0.9s linear infinite;margin:0 auto 16px;"></div>Загрузка...</div>';
-
-      const text = await fetchText(USERS_URL);
-      if (!text) return list.innerHTML = '<div style="text-align:center;padding:70px 0;color:#fca5a5;">Ошибка загрузки</div>';
-
-      for (const line of text.split('\n')) {
-        if (line.startsWith(userId + ':')) {
-          configs = line.split(':').slice(1).join(':').split('|').map(c => c.trim()).filter(c => c.startsWith('vless://'));
-          break;
+    <div class="tab-bar">
+        <a href="#" class="tab-item active" onclick="showPage('buy', this)">
+            <i class="fas fa-bolt"></i>
+            <span>Купить</span>
+        </a>
+        <a href="#" class="tab-item" onclick="showPage('keys', this)">
+            <i class="fas fa-key"></i>
+            <span>Ключи</span>
+        </a>
+        <a href="#" class="tab-item" onclick="showPage('profile', this)">
+            <i class="fas fa-user"></i>
+            <span>Профиль</span>
+        </a>
+        <a href="#" class="tab-item" onclick="showPage('info', this)">
+            <i class="fas fa-info-circle"></i>
+            <span>Инструкция</span>
+        </a>
+    </div>
+    <script>
+        let tg = window.Telegram?.WebApp;
+        let currentUserId = null;
+        let userKeys = [];
+        let userBalance = '0 ₽';
+        const USERS_URL = 'https://raw.githubusercontent.com/wholovelyflick/N0xVpn/refs/heads/main/users.txt';
+        const PAY_URL = 'https://raw.githubusercontent.com/wholovelyflick/N0xVpn/refs/heads/main/pay.txt';
+        const CONFIG_BASE_URL = 'v2raytun://import/';
+       
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.background = type === 'success' ?
+                'rgba(16, 185, 129, 0.12)' :
+                'rgba(30, 58, 138, 0.12)';
+            notification.style.borderColor = type === 'success' ?
+                'rgba(16, 185, 129, 0.25)' :
+                'rgba(30, 58, 138, 0.25)';
+            notification.className = `notification show`;
+           
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2800);
         }
-      }
-
-      if (!configs.length) {
-        list.innerHTML = '<div style="text-align:center;padding:70px 0;color:var(--muted);">Нет конфигов<br><button class="btn" style="margin-top:24px;" onclick="tg.switchInlineQueryCurrentChat(\'/buy\')">Купить подписку</button></div>';
-        document.getElementById('count').textContent = '0';
-        return;
-      }
-
-      list.innerHTML = '';
-      configs.forEach((cfg, i) => {
-        const el = document.createElement('div');
-        el.className = 'key-card';
-        el.innerHTML = `
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-            <div style="font-weight:600;">Сервер ${i+1}</div>
-            <span style="color:var(--success);font-size:14px;">активен</span>
-          </div>
-          <div style="color:var(--muted);font-size:13.5px;word-break:break-all;opacity:0.9;margin-bottom:14px;">
-            ${cfg.slice(0,72)}${cfg.length>72?'...':''}
-          </div>
-          <div style="display:flex;gap:12px;">
-            <button class="small-btn" onclick="location='v2raytun://import/${encodeURIComponent(cfg)}'">Подключить</button>
-            <button class="small-btn" onclick="navigator.clipboard.writeText('${cfg}').then(()=>tg.showPopup({message:'Скопировано'}))">Копировать</button>
-          </div>`;
-        list.appendChild(el);
-      });
-
-      document.getElementById('count').textContent = configs.length;
-    }
-
-    function showPage(id, el) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      setTimeout(() => document.getElementById(id).classList.add('active'), 80);
-
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      if (el) el.classList.add('active');
-    }
-
-    // Init
-    loadKeys();
-  </script>
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 45; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = Math.random() * 3 + 1 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 18 + 's';
+                particle.style.animationDuration = Math.random() * 18 + 9 + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        async function loadFile(url) {
+            try {
+                const response = await fetch(url + '?t=' + Date.now());
+                if (!response.ok) return null;
+                return await response.text();
+            } catch (error) {
+                return null;
+            }
+        }
+        async function loadUsersFile() {
+            const text = await loadFile(USERS_URL);
+            if (!text) return {};
+           
+            const users = {};
+            const lines = text.split('\n').filter(line => line.trim());
+           
+            lines.forEach(line => {
+                const parts = line.split(':');
+                if (parts.length >= 2) {
+                    const userId = parts[0].trim();
+                    const configs = parts.slice(1).join(':').split('|').map(c => c.trim());
+                    if (userId && !isNaN(userId)) {
+                        users[userId] = configs.filter(config => config.startsWith('vless://'));
+                    }
+                }
+            });
+           
+            return users;
+        }
+        async function loadBalanceFile() {
+            const text = await loadFile(PAY_URL);
+            if (!text) return {};
+           
+            const balances = {};
+            const lines = text.split('\n').filter(line => line.trim());
+           
+            lines.forEach(line => {
+                const parts = line.split(':');
+                if (parts.length >= 2) {
+                    const userId = parts[0].trim();
+                    const balance = parts[1].trim();
+                    if (userId && !isNaN(userId)) {
+                        balances[userId] = balance;
+                    }
+                }
+            });
+           
+            return balances;
+        }
+        function parseVlessConfig(config) {
+            try {
+                const match = config.match(/vless:\/\/([^@]+)@([^:]+):(\d+)\?(.+)#(.+)/);
+                if (!match) return null;
+               
+                const [, uuid, address, port, params, name] = match;
+                const paramsObj = Object.fromEntries(
+                    new URLSearchParams(params).entries()
+                );
+               
+                return {
+                    uuid,
+                    address,
+                    port: parseInt(port),
+                    params: paramsObj,
+                    name,
+                    raw: config,
+                    type: 'vless'
+                };
+            } catch (error) {
+                return null;
+            }
+        }
+        async function loadKeys(forceRefresh = false) {
+            const keyList = document.getElementById('keyList');
+            const keysCountText = document.getElementById('keysCountText');
+           
+            keyList.innerHTML = `
+                <div style="text-align: center; padding: 38px; color: var(--text-muted);">
+                    <div class="loader" style="margin: 0 auto 13px;"></div>
+                    <div>Загрузка ключей...</div>
+                </div>
+            `;
+           
+            try {
+                const users = await loadUsersFile();
+                currentUserId = tg?.initDataUnsafe?.user?.id?.toString() || 'test_user';
+               
+                if (users[currentUserId]) {
+                    userKeys = users[currentUserId]
+                        .map(parseVlessConfig)
+                        .filter(config => config !== null);
+                   
+                    renderKeys();
+                } else {
+                    keyList.innerHTML = `
+                        <div style="text-align: center; padding: 38px; color: var(--text-muted);">
+                            <i class="fas fa-key" style="font-size: 46px; margin-bottom: 18px; opacity: 0.45;"></i>
+                            <div>У вас нет активных ключей</div>
+                            <button class="btn-secondary" onclick="initiatePayment()" style="margin-top: 18px;">
+                                <i class="fas fa-shopping-cart"></i> Купить подписку
+                            </button>
+                        </div>
+                    `;
+                    keysCountText.textContent = '0 ключей';
+                }
+            } catch (error) {
+                keyList.innerHTML = `
+                    <div style="text-align: center; padding: 38px; color: #ef4444;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 46px; margin-bottom: 18px;"></i>
+                        <div>Ошибка загрузки ключей</div>
+                    </div>
+                `;
+            }
+        }
+        function renderKeys() {
+            const keyList = document.getElementById('keyList');
+            const keysCountText = document.getElementById('keysCountText');
+           
+            keyList.innerHTML = '';
+           
+            if (userKeys.length === 0) {
+                keyList.innerHTML = `
+                    <div style="text-align: center; padding: 38px; color: var(--text-muted);">
+                        <i class="fas fa-key" style="font-size: 46px; margin-bottom: 18px; opacity: 0.45;"></i>
+                        <div>У вас нет активных ключей</div>
+                    </div>
+                `;
+                keysCountText.textContent = '0 ключей';
+                return;
+            }
+           
+            userKeys.forEach((key, index) => {
+                const countryMatch = key.name.match(/🇷🇺|🇺🇸|🇩🇪|🇫🇷|🇬🇧|🇯🇵|🇨🇦|🇸🇬|🇦🇺|🇳🇱|🇫🇮/);
+                const country = countryMatch ? countryMatch[0] : '🌐';
+                const nameWithoutFlag = key.name.replace(/^[^\w\s]*\s*/, '');
+               
+                const keyElement = document.createElement('div');
+                keyElement.className = 'key-item';
+                keyElement.innerHTML = `
+                    <div class="key-header">
+                        <div class="key-country">
+                            <span class="key-flag">${country}</span>
+                            <span>${nameWithoutFlag}</span>
+                        </div>
+                        <div class="key-status">
+                            <i class="fas fa-circle" style="font-size: 7px;"></i>
+                            Активен
+                        </div>
+                    </div>
+                    <div style="color: var(--text-muted); font-size: 13px; margin: 8px 0;">
+                        <div style="display: flex; gap: 13px; flex-wrap: wrap;">
+                            <span><i class="fas fa-server"></i> ${key.address}:${key.port}</span>
+                            <span><i class="fas fa-user-secret"></i> ${key.uuid.substring(0, 8)}...</span>
+                            <span><i class="fas fa-shield-alt"></i> ${key.params.security || 'tls'}</span>
+                        </div>
+                    </div>
+                    <div class="key-details">
+                        <div>
+                            <div style="font-size: 11px; color: var(--text-muted);">Конфигурация VLESS</div>
+                            <div style="font-family: monospace; font-size: 11px; color: var(--accent-blue); word-break: break-all;">
+                                ${key.raw.substring(0, 55)}...
+                            </div>
+                        </div>
+                        <div class="key-actions">
+                            <button class="key-action-btn" onclick="connectToVpn(${index})">
+                                <i class="fas fa-plug"></i> Подключить
+                            </button>
+                            <button class="key-action-btn" onclick="copyConfig(${index})">
+                                <i class="fas fa-copy"></i> Копировать
+                            </button>
+                        </div>
+                    </div>
+                `;
+                keyList.appendChild(keyElement);
+            });
+           
+            keysCountText.textContent = `${userKeys.length} ${getKeyWord(userKeys.length)}`;
+        }
+        function getKeyWord(count) {
+            if (count % 10 === 1 && count % 100 !== 11) return 'ключ';
+            if ([2,3,4].includes(count % 10) && ![12,13,14].includes(count % 100)) return 'ключа';
+            return 'ключей';
+        }
+        function connectToVpn(keyIndex) {
+            if (!userKeys[keyIndex]) return;
+           
+            const config = userKeys[keyIndex];
+            const connectionUrl = `${CONFIG_BASE_URL}${encodeURIComponent(config.raw)}`;
+           
+            window.location.href = connectionUrl;
+           
+            setTimeout(() => {
+                document.getElementById('connectionStatus').style.display = 'flex';
+                document.getElementById('connectionText').textContent = `Подключено к ${config.name}`;
+            }, 900);
+        }
+        function connectAllConfigs() {
+            if (userKeys.length === 0) return;
+           
+            const allConfigs = userKeys.map(key => key.raw).join('\n');
+            const connectionUrl = `${CONFIG_BASE_URL}${encodeURIComponent(allConfigs)}`;
+           
+            window.location.href = connectionUrl;
+           
+            setTimeout(() => {
+                document.getElementById('connectionStatus').style.display = 'flex';
+                document.getElementById('connectionText').textContent = `Подключено ${userKeys.length} серверов`;
+            }, 1300);
+        }
+        function copyConfig(keyIndex) {
+            if (!userKeys[keyIndex]) return;
+           
+            const config = userKeys[keyIndex].raw;
+           
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(config).then(() => {
+                    showNotification('Конфигурация скопирована', 'success');
+                }).catch(err => {
+                    fallbackCopy(config);
+                });
+            } else {
+                fallbackCopy(config);
+            }
+        }
+        function fallbackCopy(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.opacity = '0';
+            document.body.appendChild(textArea);
+            textArea.select();
+           
+            try {
+                document.execCommand('copy');
+                showNotification('Конфигурация скопирована', 'success');
+            } catch (err) {
+            }
+           
+            document.body.removeChild(textArea);
+        }
+        function initiatePayment() {
+            if (tg) {
+                tg.close();
+                return;
+            }
+           
+            showNotification('Перейдите в бота и введите /buy', 'info');
+        }
+        async function refreshProfile() {
+            if (!tg?.initDataUnsafe?.user) return;
+           
+            const user = tg.initDataUnsafe.user;
+            const userName = document.getElementById('user-name');
+            const userId = document.getElementById('user-id');
+            const profileAvatar = document.getElementById('profileAvatar');
+            const userStats = document.getElementById('userStats');
+           
+            userName.textContent = user.first_name || 'Пользователь';
+            userId.textContent = user.id;
+           
+            if (user.first_name) {
+                profileAvatar.innerHTML = user.first_name.charAt(0).toUpperCase();
+                profileAvatar.style.fontSize = '44px';
+                profileAvatar.style.fontWeight = 'bold';
+            }
+           
+            const balances = await loadBalanceFile();
+            currentUserId = user.id.toString();
+            userBalance = balances[currentUserId] || '0 ₽';
+           
+            userStats.innerHTML = `
+                <div class="glass-card" style="padding: 13px; text-align: center;">
+                    <div style="color: var(--text-muted); font-size: 11px; margin-bottom: 6px;">
+                        <i class="fas fa-wallet"></i> Баланс
+                    </div>
+                    <div style="font-weight: 800; font-size: 15px; color: var(--success);">
+                        ${userBalance}
+                    </div>
+                </div>
+               
+                <div class="glass-card" style="padding: 13px; text-align: center;">
+                    <div style="color: var(--text-muted); font-size: 11px; margin-bottom: 6px;">
+                        <i class="fas fa-key"></i> Ключей
+                    </div>
+                    <div style="font-weight: 800; font-size: 15px;">
+                        ${userKeys.length} шт.
+                    </div>
+                </div>
+               
+                <div class="glass-card" style="padding: 13px; text-align: center; grid-column: span 2;">
+                    <div style="color: var(--text-muted); font-size: 11px; margin-bottom: 6px;">
+                        <i class="fas fa-database"></i> Использовано трафика
+                    </div>
+                    <div style="font-weight: 800; font-size: 15px;">
+                        0.0 GB / ∞
+                    </div>
+                </div>
+            `;
+        }
+        function showPage(pageId, element) {
+            document.querySelectorAll('.page').forEach(p => {
+                p.classList.remove('active');
+            });
+           
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+           
+            if (element) {
+                document.querySelectorAll('.tab-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                element.classList.add('active');
+               
+                if (pageId === 'keys') {
+                    loadKeys();
+                } else if (pageId === 'profile') {
+                    refreshProfile();
+                }
+            }
+        }
+        function openAppStore() {
+            window.open('https://apps.apple.com/us/app/v2raytun/id6478901130', '_blank');
+        }
+        function openPlayStore() {
+            window.open('https://play.google.com/store/apps/details?id=com.v2raytun.app', '_blank');
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+           
+            if (tg) {
+                tg.ready();
+                tg.expand();
+                tg.setHeaderColor('#04050d');
+                tg.setBackgroundColor('#04050d');
+               
+                const user = tg.initDataUnsafe?.user;
+                if (user) {
+                    document.getElementById('user-name').textContent = user.first_name || 'Пользователь';
+                    document.getElementById('user-id').textContent = user.id;
+                    currentUserId = user.id.toString();
+                }
+            }
+           
+            loadKeys();
+            refreshProfile();
+        });
+    </script>
 </body>
 </html>
+```

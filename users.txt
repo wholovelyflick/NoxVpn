@@ -1,2 +1,1 @@
-1051288232:vless://385c04af-5ea5-415b-bf6b-dd52de617772@ru-1.tconnect.services:443?security=reality&encryption=none&pbk=6uOn_Wsv4J5DV6HtQ0Q7kUvxwxsBFFTSiRlXAss292Y&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=rutube.ru&sid=71e87186710e710e#%D1%82%D0%B5%D1%81%D1%82
-1757441695:vless://385c04af-5ea5-415b-bf6b-dd52de617772@ru-1.tconnect.services:443?security=reality&encryption=none&pbk=6uOn_Wsv4J5DV6HtQ0Q7kUvxwxsBFFTSiRlXAss292Y&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=rutube.ru&sid=71e87186710e710e#%D1%82%D0%B5%D1%81%D1%82
+1051288232:https://213.21.253.248:2096/sub/admin

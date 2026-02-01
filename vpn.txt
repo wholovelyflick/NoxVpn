@@ -1,1 +1,1 @@
-vless://3a4ddfac-e7da-48c9-9648-4a366109fc3a@api.steamsale.ir:443?path=%2FX0PX5Vup1qlVVzhxp6ic50a&security=tls&alpn=http%2F1.1&encryption=none&insecure=0&host=mtn.vpsmee.ir&type=ws&allowInsecure=0&sni=cdn.vpsmee.ir#%F0%9F%87%A9%F0%9F%87%AA%20Germany%2C%20Falkenstein%20%5BBL%5D
+vless://7b1ed886-948f-f061-d2b2-bb1fa4f2d5b7@212.233.73.116:443?security=reality&encryption=none&pbk=0ey51SM0-muvtD83XFCeeU7zzR-IvAWdWp6vhEmwekk&fp=chrome&type=grpc&sni=ads.x5.ru&sid=f261f5cebd#%F0%9F%87%A6%F0%9F%87%B9%20Austria%20%5B*CIDR%5D%20VK

@@ -1,1 +1,1 @@
-vless://6202b230-417c-4d8e-b624-0f71afa9c75d@156.243.83.238:2096?path=%2F%3Fed%3D2560%26Telegram%F0%9F%87%A8%F0%9F%87%B3%40WangCai2&security=tls&encryption=none&host=sni.jpmj.dev&type=ws&sni=sni.jpmj.dev#%F0%9F%87%B5%F0%9F%87%B9%20Portugal
+vless://f5a8e5fb-baa8-48cb-a62a-930c97c29eb2@87.242.103.184:443?security=reality&encryption=none&pbk=98aKRSTSW_8Fpd8e63HOuqLhnlGvZrTD5EBPTMy0tBc&fp=chrome&spx=%2F&type=grpc&sni=ya.ru&sid=7dcd0c337708#%F0%9F%87%B7%F0%9F%87%BA%20Russia%20%5B*CIDR%5D

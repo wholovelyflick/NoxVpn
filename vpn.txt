@@ -1,1 +1,1 @@
-vless://895f80be-902e-45c2-9b23-a27283edc180@82.146.38.194:443?security=reality&encryption=none&pbk=34DUDsfZ0zjJ2PIspatJC8Gl-hXq9EbIRsORflvIIGw&headerType=&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=google.com&sid=23c30a7eb4ecbc24#%F0%9F%8C%90%20Anycast-IP%20%7C%20NL%2C%20PL%20%7C%20%5BBL%5D
+vless://e384913f-8863-47b4-8858-a84b68abb4a6@155.212.215.3:23335?security=reality&encryption=none&pbk=7Gi8eiUU9TIVbGuvSU16gl5-Aqt7tcCSB9x6CSxyvik&headerType=&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=icloud.com#%F0%9F%87%B7%F0%9F%87%BA%20Russia%2C%20St%20Petersburg%20%7C%20%5BBL%5D
